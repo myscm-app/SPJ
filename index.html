@@ -21,11 +21,14 @@
 
     /* Tab Active State */
     .tab-btn.active { @apply border-indigo-500 text-indigo-600 bg-indigo-50; }
+    
+    /* Setting Input Compact */
+    .setting-input { @apply w-full text-center border-gray-300 h-8 text-xs border rounded bg-gray-50 focus:bg-white focus:ring-1 focus:ring-indigo-500; }
   </style>
 </head>
 <body class="py-6 px-4 sm:px-8">
 
-  <!-- DATALIST GLOBAL UNTUK AUTOCOMPLETE -->
+  <!-- DATALIST GLOBAL -->
   <datalist id="listCustomers"></datalist>
   <datalist id="listItems"></datalist>
 
@@ -51,32 +54,30 @@
       <div class="bg-indigo-600 px-6 py-4 flex justify-between items-center">
         <div>
           <h2 class="text-xl font-bold text-white">Input Surat Jalan</h2>
-          <div id="loadingDataStatus" class="text-indigo-100 text-xs mt-1">Memuat Data Master...</div>
+          <div id="loadingDataStatus" class="text-indigo-100 text-xs mt-1">Memuat Data...</div>
         </div>
         <div class="flex items-center gap-4">
            <button onclick="handlePreview()" class="text-indigo-200 hover:text-white flex flex-col items-center">
               <i class="fa-solid fa-eye"></i><span class="text-[10px]">Preview</span>
            </button>
            <button onclick="toggleSettingsModal()" class="text-indigo-200 hover:text-white flex flex-col items-center">
-              <i class="fa-solid fa-gear"></i><span class="text-[10px]">Setting</span>
+              <i class="fa-solid fa-sliders"></i><span class="text-[10px]">Setting</span>
            </button>
         </div>
       </div>
 
       <form id="spjForm" class="p-6 space-y-6" onsubmit="handleFormSubmit(event)">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <!-- Kolom Kiri: Tujuan -->
+          <!-- Kolom Kiri -->
           <div class="space-y-4">
             <div>
               <label class="label-text">Pilih Customer</label>
-              <!-- Input dengan Datalist untuk Autocomplete -->
               <input list="listCustomers" id="inputCustomerName" class="input-field bg-indigo-50 font-bold" placeholder="Ketik nama customer..." onchange="autoFillCustomer(this)">
             </div>
             <div>
-              <label class="label-text">Alamat Lengkap (Otomatis/Manual)</label>
-              <textarea name="tujuan" id="inputCustomerAddress" required class="input-field h-24" placeholder="Alamat akan muncul otomatis..."></textarea>
+              <label class="label-text">Alamat Lengkap</label>
+              <textarea name="tujuan" id="inputCustomerAddress" required class="input-field h-24"></textarea>
             </div>
-            
              <div class="grid grid-cols-2 gap-2 mt-4">
                <div>
                   <label class="label-text">Jumlah Pallet</label>
@@ -85,7 +86,7 @@
              </div>
           </div>
 
-          <!-- Kolom Kanan: Detail Surat Jalan -->
+          <!-- Kolom Kanan -->
           <div class="space-y-3 bg-gray-50 p-4 rounded-md border">
             <div class="grid grid-cols-2 gap-2">
               <div>
@@ -133,13 +134,13 @@
             <table class="min-w-full table-bordered" id="itemTable">
               <thead class="bg-gray-100">
                 <tr>
-                  <th class="px-3 py-2 text-left text-xs font-bold w-1/4">Nama Item (Cari)</th>
-                  <th class="px-3 py-2 text-left text-xs font-bold w-20">Kode</th>
-                  <th class="px-3 py-2 text-left text-xs font-bold w-16">UoM</th>
-                  <th class="px-3 py-2 text-left text-xs font-bold w-20">Qty Pesan</th>
-                  <th class="px-3 py-2 text-left text-xs font-bold w-20">Qty Kirim</th>
-                  <th class="px-3 py-2 text-left text-xs font-bold w-20">Berat(kg)</th>
-                  <th class="px-3 py-2 text-left text-xs font-bold w-24">Total(Ton)</th>
+                  <th class="px-3 py-2 w-1/4">Nama Item</th>
+                  <th class="px-3 py-2 w-20">Kode</th>
+                  <th class="px-3 py-2 w-16">UoM</th>
+                  <th class="px-3 py-2 w-20">Qty Pesan</th>
+                  <th class="px-3 py-2 w-20">Qty Kirim</th>
+                  <th class="px-3 py-2 w-20">Berat</th>
+                  <th class="px-3 py-2 w-24">Total(Ton)</th>
                   <th class="px-2 py-2 w-10"></th>
                 </tr>
               </thead>
@@ -160,107 +161,101 @@
       </form>
     </div>
 
-    <!-- ================= TAB 2: MASTER CUSTOMER ================= -->
+    <!-- ================= TAB 2 & 3: MASTER DATA ================= -->
     <div id="tab-customer" class="tab-content hidden p-6">
-       <h3 class="text-lg font-bold text-gray-800 mb-4">Tambah Master Customer</h3>
+       <h3 class="text-lg font-bold text-gray-800 mb-4">Master Customer</h3>
        <div class="bg-gray-50 p-4 rounded border mb-6">
          <form onsubmit="handleMasterSubmit(event, 'save_customer')">
            <div class="grid grid-cols-1 gap-4">
-             <div>
-               <label class="label-text">Nama Customer (PT/CV)</label>
-               <input type="text" name="nama" required class="input-field">
-             </div>
-             <div>
-               <label class="label-text">Alamat Lengkap</label>
-               <textarea name="alamat" required class="input-field h-20"></textarea>
-             </div>
-             <button type="submit" class="w-full sm:w-auto bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Simpan Customer</button>
+             <div><label class="label-text">Nama Customer</label><input type="text" name="nama" required class="input-field"></div>
+             <div><label class="label-text">Alamat</label><textarea name="alamat" required class="input-field h-20"></textarea></div>
+             <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Simpan</button>
            </div>
          </form>
        </div>
-       
-       <h4 class="font-bold text-gray-700 mb-2">Data Customer Tersedia (Dari Spreadsheet)</h4>
-       <div class="overflow-auto max-h-96 border rounded">
-         <table class="min-w-full table-bordered text-sm">
-            <thead class="bg-gray-100 sticky top-0">
-               <tr><th class="p-2 text-left">Nama</th><th class="p-2 text-left">Alamat</th></tr>
-            </thead>
-            <tbody id="displayCustomers" class="bg-white">
-               <tr><td colspan="2" class="p-2 text-center">Memuat...</td></tr>
-            </tbody>
-         </table>
-       </div>
+       <div class="overflow-auto max-h-96 border rounded"><table class="min-w-full table-bordered"><tbody id="displayCustomers"></tbody></table></div>
     </div>
 
-    <!-- ================= TAB 3: MASTER ITEM ================= -->
     <div id="tab-item" class="tab-content hidden p-6">
-       <h3 class="text-lg font-bold text-gray-800 mb-4">Tambah Master Item</h3>
+       <h3 class="text-lg font-bold text-gray-800 mb-4">Master Item</h3>
        <div class="bg-gray-50 p-4 rounded border mb-6">
          <form onsubmit="handleMasterSubmit(event, 'save_item')">
            <div class="grid grid-cols-2 gap-4">
-             <div>
-               <label class="label-text">Kode Item</label>
-               <input type="text" name="kode" required class="input-field">
-             </div>
-             <div>
-               <label class="label-text">Nama Item</label>
-               <input type="text" name="nama" required class="input-field">
-             </div>
-             <div class="col-span-2">
-               <label class="label-text">UoM (Satuan)</label>
-               <input type="text" name="uom" required class="input-field" placeholder="ZAK/PAIL">
-             </div>
-             <!-- FIELD BERAT DIHAPUS DISINI -->
-             <div class="col-span-2">
-                <button type="submit" class="w-full sm:w-auto bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Simpan Item</button>
-             </div>
+             <div><label class="label-text">Kode</label><input type="text" name="kode" required class="input-field"></div>
+             <div><label class="label-text">Nama</label><input type="text" name="nama" required class="input-field"></div>
+             <div class="col-span-2"><label class="label-text">UoM</label><input type="text" name="uom" required class="input-field"></div>
+             <div class="col-span-2"><button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Simpan</button></div>
            </div>
          </form>
        </div>
-
-       <h4 class="font-bold text-gray-700 mb-2">Data Item Tersedia</h4>
-       <div class="overflow-auto max-h-96 border rounded">
-         <table class="min-w-full table-bordered text-sm">
-            <thead class="bg-gray-100 sticky top-0">
-               <tr><th class="p-2">Kode</th><th class="p-2">Nama</th><th class="p-2">UoM</th></tr>
-            </thead>
-            <tbody id="displayItems" class="bg-white">
-               <tr><td colspan="3" class="p-2 text-center">Memuat...</td></tr>
-            </tbody>
-         </table>
-       </div>
+       <div class="overflow-auto max-h-96 border rounded"><table class="min-w-full table-bordered"><tbody id="displayItems"></tbody></table></div>
     </div>
 
   </div>
 
-  <!-- MODAL PENGATURAN & PREVIEW (TETAP ADA) -->
+  <!-- MODAL PENGATURAN LENGKAP -->
   <div id="settingsModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
-    <div class="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+    <div class="flex items-center justify-center min-h-screen px-4 text-center sm:block sm:p-0">
       <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" onclick="toggleSettingsModal()"></div>
-      <div class="inline-block px-4 pt-5 pb-4 bg-white rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-sm sm:w-full sm:p-6">
-         <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">Pengaturan Kertas</h3>
-         <div class="space-y-4 bg-gray-50 p-3 rounded-md border border-gray-200">
-             <div>
-               <label class="block text-sm font-bold text-gray-700">Offset X (mm)</label>
-               <input type="number" id="set_offsetX" class="input-field" value="5">
+      <div class="inline-block px-4 pt-5 pb-4 bg-white rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-3xl sm:w-full sm:p-6 text-left">
+         
+         <div class="flex justify-between items-center mb-4 border-b pb-2">
+            <h3 class="text-lg font-bold text-gray-900">Pengaturan Posisi Cetak (mm)</h3>
+            <button onclick="toggleSettingsModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-times"></i></button>
+         </div>
+
+         <div class="h-[70vh] overflow-y-auto pr-2">
+             <!-- UMUM -->
+             <div class="mb-4 bg-gray-50 p-3 rounded border">
+                <h4 class="font-bold text-indigo-700 text-sm mb-2 border-b border-gray-200 pb-1">1. Umum</h4>
+                <div class="grid grid-cols-3 gap-4">
+                   <div><label class="text-xs font-semibold block mb-1">Ukuran Font (pt)</label><input type="number" id="conf_fontSize" class="setting-input bg-white"></div>
+                </div>
              </div>
-             <div>
-               <label class="block text-sm font-bold text-gray-700">Offset Y (mm)</label>
-               <input type="number" id="set_offsetY" class="input-field" value="13">
+
+             <!-- POSISI HEADER -->
+             <div class="mb-4 bg-gray-50 p-3 rounded border">
+                <h4 class="font-bold text-indigo-700 text-sm mb-2 border-b border-gray-200 pb-1">2. Posisi Header (Atur Koordinat)</h4>
+                
+                <div class="grid grid-cols-12 gap-2 text-xs font-semibold text-gray-600 mb-2">
+                    <div class="col-span-4">Nama Kolom</div>
+                    <div class="col-span-4 text-center">Posisi X (Horizontal)</div>
+                    <div class="col-span-4 text-center">Posisi Y (Vertikal)</div>
+                </div>
+                
+                <div id="headerConfigContainer" class="space-y-2">
+                    <!-- Javascript akan mengisi ini -->
+                </div>
              </div>
-             <div>
-                <label class="block text-sm font-bold text-gray-700">Ukuran Font (pt)</label>
-                <input type="number" id="set_fontSize" class="input-field" value="10">
+
+             <!-- POSISI TABEL -->
+             <div class="mb-4 bg-gray-50 p-3 rounded border">
+                <h4 class="font-bold text-indigo-700 text-sm mb-2 border-b border-gray-200 pb-1">3. Posisi Daftar Barang (Tabel)</h4>
+                <div class="grid grid-cols-2 gap-4 mb-3">
+                    <div><label class="text-xs font-semibold block mb-1">Posisi Mulai Tabel (Y)</label><input type="number" id="conf_tableY" class="setting-input bg-white"></div>
+                    <div><label class="text-xs font-semibold block mb-1">Tinggi Baris (Row Height)</label><input type="number" id="conf_rowH" class="setting-input bg-white"></div>
+                </div>
+                
+                <div class="grid grid-cols-12 gap-2 text-xs font-semibold text-gray-600 mb-2">
+                    <div class="col-span-4">Kolom Tabel</div>
+                    <div class="col-span-8 text-center">Posisi X (Horizontal)</div>
+                </div>
+                <div id="tableConfigContainer" class="space-y-2">
+                    <!-- Javascript akan mengisi ini -->
+                </div>
              </div>
          </div>
-         <div class="mt-4 flex gap-2">
-            <button onclick="saveSettings()" class="w-full py-2 bg-indigo-600 text-white rounded">Simpan</button>
-            <button onclick="toggleSettingsModal()" class="w-full py-2 bg-gray-200 text-gray-700 rounded">Batal</button>
+
+         <div class="mt-4 flex gap-2 border-t pt-4 bg-white sticky bottom-0">
+            <button id="btnSaveSetting" onclick="saveSettings()" class="w-full py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 font-bold shadow">
+                <i class="fa-solid fa-cloud-arrow-up mr-2"></i> Simpan Setting Permanen
+            </button>
          </div>
       </div>
     </div>
   </div>
 
+  <!-- MODAL PREVIEW -->
   <div id="previewModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
     <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
       <div class="fixed inset-0 transition-opacity bg-gray-900 bg-opacity-90" onclick="closePreview()"></div>
@@ -277,24 +272,55 @@
   </div>
 
   <script>
-    // --- KONFIGURASI GLOBAL ---
+    // === CONFIG ===
     const APP_CONFIG = {
         // URL DEPLOY BARU
-        script_url: 'https://script.google.com/macros/s/AKfycbwqAtB04uQ5njMVJpru8hJQPA9eBx2VGhY2THd9bMVRq3XvrrP7-8-XT7Yk12TEXdytTQ/exec', 
+        script_url: 'https://script.google.com/macros/s/AKfycbw6hzLyjrLxLVDS2j6m8Q7abXP2t3gOcZyW5QBH3FFLnNXOm-6_fYW3TggeA-1fsFhqDA/exec', 
         wa_token: 'T9SCfr4hZSmGEy8ngizJ',
-        wa_target: '6282258110899-1604625450@g.us'
+        wa_target: '6282258110899-1604625450@g.us,120363395452543087@g.us'
     };
 
-    // --- DATA MASTER LOKAL ---
     let MASTER_CUSTOMERS = [];
     let MASTER_ITEMS = [];
+    
+    // DEFAULT LAYOUT (Jika Sheet4 Kosong)
+    let LAYOUT_CONFIG = {
+      fontSize: 10,
+      fontName: 'courier',
+      // Definisi Field Header Lengkap
+      fields: {
+          customer:    { label: "Customer (Tujuan)", x: 25, y: 35, w: 80 }, 
+          no_sj:       { label: "No. Surat Jalan", x: 165, y: 22 },
+          tanggal:     { label: "Tanggal", x: 165, y: 26 },
+          no_so:       { label: "No. Sales Order (SO)", x: 165, y: 30 },
+          transporter: { label: "Transporter", x: 165, y: 34 },
+          driver:      { label: "Nama Driver", x: 165, y: 38 },
+          tipe_truk:   { label: "Tipe Truk", x: 165, y: 42 },
+          no_truk:     { label: "No. Polisi Truk", x: 165, y: 46 },
+          pallet:      { label: "Footer Pallet", x: 95, y: 143 }
+      },
+      // Definisi Tabel
+      table: { 
+          startY: 68, 
+          rowHeight: 6, 
+          cols: { 
+              kode: { label: "Kode Item", x: 17 }, 
+              nama: { label: "Nama Item", x: 47 }, 
+              uom:  { label: "UoM", x: 100 }, 
+              qty_pesan: { label: "Qty Pesan", x: 115 }, 
+              qty_kirim: { label: "Qty Kirim", x: 135 }, 
+              berat: { label: "Berat (kg)", x: 155 }, 
+              total: { label: "Total (Ton)", x: 180 } 
+          } 
+      }
+    };
 
-    // --- INIT ---
     window.onload = function() {
       fetchMasterData(); 
+      fetchSettingsData();
       addRow(); 
       document.querySelector('input[name="tanggal"]').valueAsDate = new Date();
-      loadSettings();
+      renderSettingsModal();
     };
 
     function switchTab(tabId) {
@@ -304,97 +330,126 @@
        document.getElementById('btn-'+tabId).classList.add('active', 'border-indigo-500', 'text-indigo-600', 'bg-indigo-50');
     }
 
-    // --- FETCH DATA MASTER (PERBAIKAN CORS) ---
+    // --- FETCH ---
     async function fetchMasterData() {
        const statusEl = document.getElementById('loadingDataStatus');
        try {
-          // Menambahkan credentials: 'omit' sangat penting untuk menghindari error CORS jika script dialihkan
-          const response = await fetch(APP_CONFIG.script_url + '?action=get_masters', {
-              method: 'GET',
-              mode: 'cors', // Kita perlu membaca response
-              credentials: 'omit', // JANGAN kirim cookie (menghindari redirect login google)
-              redirect: 'follow'
-          });
-          
-          if (!response.ok) throw new Error('Gagal terhubung: ' + response.status);
-          
-          const result = await response.json();
-          
+          const response = await fetch(APP_CONFIG.script_url + '?action=get_masters', { method: 'GET', mode: 'cors', credentials: 'omit', redirect: 'follow' });
+          const text = await response.text();
+          let result;
+          try { result = JSON.parse(text); } catch(e) { console.warn("Master Parse Error", text); return; }
+
           if(result.status === 'success') {
-             MASTER_CUSTOMERS = result.customers;
-             MASTER_ITEMS = result.items;
-             
-             populateDatalists();
-             renderMasterTables();
-             statusEl.innerHTML = "<span class='text-green-200'><i class='fa-solid fa-check'></i> Data Master Siap!</span>";
+             MASTER_CUSTOMERS = result.customers; MASTER_ITEMS = result.items;
+             populateDatalists(); renderMasterTables();
+             statusEl.innerHTML = "<span class='text-green-200'><i class='fa-solid fa-check'></i> Master Ready</span>";
           }
-       } catch (err) {
-          console.error("Fetch Error:", err);
-          // Tampilkan pesan error yang jelas bagi user
-          statusEl.innerHTML = `
-            <div class='bg-red-500 text-white px-2 py-1 rounded inline-block shadow'>
-               <i class='fa-solid fa-triangle-exclamation'></i> Gagal Load Master
-            </div>
-          `;
-       }
+       } catch (err) { console.error("Fetch Master Error:", err); }
     }
 
-    // --- POPULATE DATALISTS & TABLES ---
-    function populateDatalists() {
-       const dlCust = document.getElementById('listCustomers');
-       dlCust.innerHTML = MASTER_CUSTOMERS.map(c => `<option value="${c.nama}">`).join('');
+    async function fetchSettingsData() {
+       try {
+          const response = await fetch(APP_CONFIG.script_url + '?action=get_settings', { method: 'GET', mode: 'cors', credentials: 'omit', redirect: 'follow' });
+          const text = await response.text();
+          let result;
+          try { result = JSON.parse(text); } catch(e) { console.warn("Setting Parse Error (Using Defaults)", text); return; }
 
-       const dlItem = document.getElementById('listItems');
-       dlItem.innerHTML = MASTER_ITEMS.map(i => `<option value="${i.nama}">Kode: ${i.kode}</option>`).join('');
+          if(result.status === 'success' && result.data) {
+             const serverConf = result.data;
+             // Update Local Config
+             if(serverConf.fontSize) LAYOUT_CONFIG.fontSize = serverConf.fontSize;
+             if(serverConf.fields) LAYOUT_CONFIG.fields = serverConf.fields;
+             if(serverConf.table) LAYOUT_CONFIG.table = serverConf.table;
+             
+             console.log("Setting Loaded:", LAYOUT_CONFIG);
+             renderSettingsModal(); 
+          }
+       } catch (err) { console.error("Fetch Settings Error:", err); }
     }
 
-    function renderMasterTables() {
-       const tbodyCust = document.getElementById('displayCustomers');
-       if(MASTER_CUSTOMERS.length > 0) {
-          tbodyCust.innerHTML = MASTER_CUSTOMERS.map(c => `
-             <tr class="hover:bg-gray-50">
-               <td class="p-2 border border-gray-200 font-medium">${c.nama}</td>
-               <td class="p-2 border border-gray-200 text-gray-600">${c.alamat}</td>
-             </tr>`).join('');
-       } else { tbodyCust.innerHTML = '<tr><td colspan="2" class="p-2 text-center text-gray-500">Belum ada data</td></tr>'; }
+    // --- RENDER SETTINGS MODAL ---
+    function renderSettingsModal() {
+        document.getElementById('conf_fontSize').value = LAYOUT_CONFIG.fontSize;
+        
+        // Header Fields
+        const hCont = document.getElementById('headerConfigContainer');
+        hCont.innerHTML = '';
+        const fieldOrder = ['customer', 'no_sj', 'tanggal', 'no_so', 'transporter', 'driver', 'tipe_truk', 'no_truk', 'pallet'];
+        
+        fieldOrder.forEach(key => {
+            const val = LAYOUT_CONFIG.fields[key];
+            if(!val) return;
+            hCont.innerHTML += `
+                <div class="grid grid-cols-12 gap-2 items-center border-b border-gray-100 py-1">
+                    <div class="col-span-4 text-xs font-medium text-gray-700">${val.label}</div>
+                    <div class="col-span-4"><input type="number" id="f_x_${key}" value="${val.x}" class="setting-input" step="0.5"></div>
+                    <div class="col-span-4"><input type="number" id="f_y_${key}" value="${val.y}" class="setting-input" step="0.5"></div>
+                </div>
+            `;
+        });
 
-       const tbodyItem = document.getElementById('displayItems');
-       if(MASTER_ITEMS.length > 0) {
-          tbodyItem.innerHTML = MASTER_ITEMS.map(i => `
-             <tr class="hover:bg-gray-50">
-               <td class="p-2 border border-gray-200 text-gray-600">${i.kode}</td>
-               <td class="p-2 border border-gray-200 font-medium">${i.nama}</td>
-               <td class="p-2 border border-gray-200 text-gray-600">${i.uom}</td>
-             </tr>`).join('');
-       } else { tbodyItem.innerHTML = '<tr><td colspan="3" class="p-2 text-center text-gray-500">Belum ada data</td></tr>'; }
+        // Table Config
+        document.getElementById('conf_tableY').value = LAYOUT_CONFIG.table.startY;
+        document.getElementById('conf_rowH').value = LAYOUT_CONFIG.table.rowHeight;
+        
+        const tCont = document.getElementById('tableConfigContainer');
+        tCont.innerHTML = '';
+        const colOrder = ['kode', 'nama', 'uom', 'qty_pesan', 'qty_kirim', 'berat', 'total'];
+        
+        colOrder.forEach(key => {
+            const val = LAYOUT_CONFIG.table.cols[key];
+            if(!val) return;
+            tCont.innerHTML += `
+                <div class="grid grid-cols-12 gap-2 items-center border-b border-gray-100 py-1">
+                    <div class="col-span-4 text-xs font-medium text-gray-700">${val.label}</div>
+                    <div class="col-span-8"><input type="number" id="t_x_${key}" value="${val.x}" class="setting-input" step="0.5"></div>
+                </div>
+            `;
+        });
     }
 
-    // --- LOGIKA AUTO-FILL ---
-    function autoFillCustomer(inputEl) {
-       const val = inputEl.value;
-       const found = MASTER_CUSTOMERS.find(c => c.nama === val);
-       if(found) {
-          document.getElementById('inputCustomerAddress').value = found.alamat;
-       }
-    }
-
-    function autoFillItem(inputEl) {
-       const val = inputEl.value;
-       const found = MASTER_ITEMS.find(i => i.nama === val);
+    // --- SAVE SETTINGS ---
+    async function saveSettings() {
+       const btn = document.getElementById('btnSaveSetting');
+       btn.disabled = true; btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> Menyimpan...";
        
-       if(found) {
-          const tr = inputEl.closest('tr');
-          tr.querySelector('input[name="item_kode[]"]').value = found.kode;
-          tr.querySelector('input[name="item_uom[]"]').value = found.uom;
-          // PERHATIAN: Berat tidak lagi di-autofill karena sudah dihapus dari master
-          // User harus input manual.
-          calcRow(tr.querySelector('input[name="item_qty_kirim[]"]')); 
+       const newConf = JSON.parse(JSON.stringify(LAYOUT_CONFIG));
+       
+       newConf.fontSize = parseFloat(document.getElementById('conf_fontSize').value) || 10;
+       
+       // Headers
+       for (const key of Object.keys(newConf.fields)) {
+           const elX = document.getElementById(`f_x_${key}`);
+           const elY = document.getElementById(`f_y_${key}`);
+           if(elX && elY) {
+               newConf.fields[key].x = parseFloat(elX.value);
+               newConf.fields[key].y = parseFloat(elY.value);
+           }
+       }
+       
+       // Table
+       newConf.table.startY = parseFloat(document.getElementById('conf_tableY').value);
+       newConf.table.rowHeight = parseFloat(document.getElementById('conf_rowH').value);
+       for (const key of Object.keys(newConf.table.cols)) {
+           const elX = document.getElementById(`t_x_${key}`);
+           if(elX) newConf.table.cols[key].x = parseFloat(elX.value);
+       }
+
+       try {
+          await postDataToSheet('save_settings', newConf);
+          LAYOUT_CONFIG = newConf; 
+          alert("Setting Tersimpan!");
+          toggleSettingsModal();
+       } catch (e) {
+          alert("Gagal simpan: " + e.message);
+       } finally {
+          btn.disabled = false; btn.innerHTML = "<i class='fa-solid fa-cloud-arrow-up mr-2'></i> Simpan Setting Permanen";
        }
     }
+
+    function toggleSettingsModal() { document.getElementById('settingsModal').classList.toggle('hidden'); }
 
     // --- FORM HANDLING ---
-    
-    // 1. Simpan Transaksi
     async function handleFormSubmit(e) {
       e.preventDefault();
       const btn = document.getElementById('btnSave');
@@ -403,32 +458,72 @@
       
       if(!data.header.no_sj) { alert("Isi No Surat Jalan!"); return; }
 
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses...';
+      btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses...';
       status.className = 'hidden';
 
       try {
          await postDataToSheet('save_sj', data);
-         
          const doc = createPDFObject(data);
          doc.save(`SJ_${data.header.no_sj.replace(/\//g, '-')}.pdf`);
-
          await sendWhatsappMessage(data);
-
          status.innerHTML = "✅ Transaksi Disimpan, PDF Download, WA Terkirim!";
          status.className = "mt-4 p-4 bg-green-100 text-green-700 rounded block border border-green-300";
-         
          setTimeout(() => { location.reload(); }, 3000);
-
       } catch (err) {
          status.innerHTML = "⚠️ Error: " + err.message;
          status.className = "mt-4 p-4 bg-red-100 text-red-700 rounded block border border-red-300";
-         btn.disabled = false;
-         btn.innerHTML = 'Coba Lagi';
+         btn.disabled = false; btn.innerHTML = 'Coba Lagi';
       }
     }
 
-    // 2. Simpan Master
+    // --- PDF GENERATOR (COORDINATE BASED) ---
+    function createPDFObject(data) {
+      const { jsPDF } = window.jspdf;
+      const cfg = LAYOUT_CONFIG;
+      const f = cfg.fields;
+      
+      const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: [229, 162] });
+      doc.setFont(cfg.fontName, 'normal'); 
+      doc.setFontSize(cfg.fontSize);
+      
+      const txt = (str, x, y) => { if(str) doc.text(String(str).toUpperCase(), x, y); };
+      
+      // Header Fields using Configured Coordinates
+      txt(data.header.no_sj, f.no_sj.x, f.no_sj.y);
+      txt(data.header.tanggal, f.tanggal.x, f.tanggal.y);
+      txt(data.header.no_so, f.no_so.x, f.no_so.y);
+      txt(data.header.transporter, f.transporter.x, f.transporter.y);
+      txt(data.header.driver, f.driver.x, f.driver.y);
+      txt(data.header.tipe_truk, f.tipe_truk.x, f.tipe_truk.y);
+      txt(data.header.no_truk, f.no_truk.x, f.no_truk.y);
+      
+      // Address Multiline
+      if (data.header.tujuan) { 
+         doc.text(doc.splitTextToSize(data.header.tujuan.toUpperCase(), f.customer.w || 80), f.customer.x, f.customer.y); 
+      }
+      
+      // Table
+      let cy = cfg.table.startY;
+      const tc = cfg.table.cols;
+      
+      data.items.forEach(item => {
+        txt(item.kode, tc.kode.x, cy);
+        txt(item.nama, tc.nama.x, cy);
+        txt(item.uom, tc.uom.x, cy);
+        txt(item.qty_pesan, tc.qty_pesan.x, cy);
+        txt(item.qty_kirim, tc.qty_kirim.x, cy);
+        txt(item.berat, tc.berat.x, cy);
+        txt(item.total_berat, tc.total.x, cy);
+        cy += cfg.table.rowHeight;
+      });
+      
+      // Footer
+      txt(data.header.pallet, f.pallet.x, f.pallet.y);
+      
+      return doc;
+    }
+
+    // --- HELPERS ---
     async function handleMasterSubmit(e, actionType) {
        e.preventDefault();
        const form = e.target;
@@ -437,104 +532,75 @@
        
        const btn = form.querySelector('button[type="submit"]');
        const originalText = btn.textContent;
-       btn.disabled = true; 
-       btn.textContent = "Menyimpan...";
+       btn.disabled = true; btn.textContent = "Menyimpan...";
 
        try {
           await postDataToSheet(actionType, data);
           alert("Data Master Berhasil Disimpan!");
           form.reset();
-          // Coba fetch lagi untuk update tampilan tabel
           fetchMasterData(); 
-       } catch (err) {
-          alert("Gagal simpan (Cek koneksi/script): " + err.message);
-       } finally {
-          btn.disabled = false;
-          btn.textContent = originalText;
-       }
+       } catch (err) { alert("Gagal simpan: " + err.message); } 
+       finally { btn.disabled = false; btn.textContent = originalText; }
     }
-
-    // Helper POST
+    
     async function postDataToSheet(action, dataPayload) {
-       const payload = { action: action, data: dataPayload };
-       
-       // Menggunakan text/plain untuk menghindari Preflight request (OPTIONS) yang sering gagal di GAS
-       await fetch(APP_CONFIG.script_url, {
-          method: 'POST',
-          mode: 'no-cors', 
-          headers: { 'Content-Type': 'text/plain' }, 
-          body: JSON.stringify(payload)
-       });
+       await fetch(APP_CONFIG.script_url, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: action, data: dataPayload }) });
        return true; 
     }
 
-    // --- DOM & HELPER FUNCTIONS ---
+    function populateDatalists() {
+       document.getElementById('listCustomers').innerHTML = MASTER_CUSTOMERS.map(c => `<option value="${c.nama}">`).join('');
+       document.getElementById('listItems').innerHTML = MASTER_ITEMS.map(i => `<option value="${i.nama}">Kode: ${i.kode}</option>`).join('');
+    }
+    function renderMasterTables() { /* Simple renderer to save space */ 
+       const c = document.getElementById('displayCustomers'); c.innerHTML = MASTER_CUSTOMERS.map(x=>`<tr><td class='p-1 border'>${x.nama}</td><td class='p-1 border'>${x.alamat}</td></tr>`).join('');
+       const i = document.getElementById('displayItems'); i.innerHTML = MASTER_ITEMS.map(x=>`<tr><td class='p-1 border'>${x.kode}</td><td class='p-1 border'>${x.nama}</td><td class='p-1 border'>${x.uom}</td></tr>`).join('');
+    }
+    
     function addRow() {
       const tbody = document.getElementById('tableBody');
       const tr = document.createElement('tr');
-      // Update: Tambahkan oninput="calcRow(this)" di kolom UoM
-      tr.innerHTML = `
-        <td class="px-2 py-1 border border-gray-300">
-           <input list="listItems" name="item_nama[]" class="input-field text-xs h-8 font-bold" placeholder="Cari..." onchange="autoFillItem(this)">
-        </td>
-        <td class="px-2 py-1 border border-gray-300"><input type="text" name="item_kode[]" class="input-field text-xs h-8 bg-gray-50" readonly></td>
-        <td class="px-2 py-1 border border-gray-300"><input type="text" name="item_uom[]" class="input-field text-xs h-8" oninput="calcRow(this)"></td>
-        <td class="px-2 py-1 border border-gray-300"><input type="number" name="item_qty_pesan[]" class="input-field text-xs h-8"></td>
-        <td class="px-2 py-1 border border-gray-300"><input type="number" name="item_qty_kirim[]" class="input-field text-xs h-8" oninput="calcRow(this)"></td>
-        <td class="px-2 py-1 border border-gray-300"><input type="number" name="item_berat[]" class="input-field text-xs h-8" step="0.01" oninput="calcRow(this)"></td>
-        <td class="px-2 py-1 border border-gray-300"><input type="number" name="item_total[]" class="input-field text-xs h-8" step="0.001"></td>
-        <td class="px-2 py-1 border border-gray-300 text-center">
-            <button type="button" onclick="this.closest('tr').remove()" class="text-red-600 hover:text-red-900 font-bold px-2">X</button>
-        </td>
-      `;
+      tr.innerHTML = `<td class="px-2 py-1 border border-gray-300"><input list="listItems" name="item_nama[]" class="input-field text-xs h-8 font-bold" placeholder="Cari..." onchange="autoFillItem(this)"></td><td class="px-2 py-1 border border-gray-300"><input type="text" name="item_kode[]" class="input-field text-xs h-8 bg-gray-50" readonly></td><td class="px-2 py-1 border border-gray-300"><input type="text" name="item_uom[]" class="input-field text-xs h-8" oninput="calcRow(this)"></td><td class="px-2 py-1 border border-gray-300"><input type="number" name="item_qty_pesan[]" class="input-field text-xs h-8"></td><td class="px-2 py-1 border border-gray-300"><input type="number" name="item_qty_kirim[]" class="input-field text-xs h-8" oninput="calcRow(this)"></td><td class="px-2 py-1 border border-gray-300"><input type="number" name="item_berat[]" class="input-field text-xs h-8" step="0.01" oninput="calcRow(this)"></td><td class="px-2 py-1 border border-gray-300"><input type="number" name="item_total[]" class="input-field text-xs h-8" step="0.001"></td><td class="px-2 py-1 border border-gray-300 text-center"><button type="button" onclick="this.closest('tr').remove()" class="text-red-600 hover:text-red-900 font-bold px-2">X</button></td>`;
       tbody.appendChild(tr);
     }
-
-    // Update Logic Kalkulasi Berdasarkan UoM
     function calcRow(input) {
        if(!input) return;
        const tr = input.closest('tr');
-       
-       // Ambil nilai
        const uom = tr.querySelector('input[name="item_uom[]"]').value.toUpperCase().trim();
        const qty = parseFloat(tr.querySelector('input[name="item_qty_kirim[]"]').value) || 0;
        const berat = parseFloat(tr.querySelector('input[name="item_berat[]"]').value) || 0;
-       
        let total = 0;
-
-       // LOGIKA KONVERSI
-       if (uom === 'KG') {
-           // Jika KG: Bagi 1000
-           total = qty / 1000;
-       } else if (uom === 'TON') {
-           // Jika TON: Bagi 1 (Tetap)
-           total = qty;
-       } else {
-           // UoM Lainnya (ZAK, PAIL, dll): (Qty * Berat Satuan) / 1000
-           total = (qty * berat) / 1000;
-       }
-
+       if (uom === 'KG') total = qty / 1000;
+       else if (uom === 'TON') total = qty;
+       else total = (qty * berat) / 1000;
        tr.querySelector('input[name="item_total[]"]').value = total.toFixed(3); 
     }
-
+    function autoFillItem(inputEl) {
+       const val = inputEl.value;
+       const found = MASTER_ITEMS.find(i => i.nama === val);
+       if(found) {
+          const tr = inputEl.closest('tr');
+          tr.querySelector('input[name="item_kode[]"]').value = found.kode;
+          tr.querySelector('input[name="item_uom[]"]').value = found.uom;
+          calcRow(tr.querySelector('input[name="item_qty_kirim[]"]')); 
+       }
+    }
+    function autoFillCustomer(inputEl) {
+       const val = inputEl.value;
+       const found = MASTER_CUSTOMERS.find(c => c.nama === val);
+       if(found) document.getElementById('inputCustomerAddress').value = found.alamat;
+    }
     function getFormDataFromDOM() {
       const form = document.getElementById('spjForm');
       const formData = new FormData(form);
       const data = {
         header: {
           tujuan: document.getElementById('inputCustomerName').value + '\n' + document.getElementById('inputCustomerAddress').value,
-          no_sj: formData.get('no_sj'),
-          tanggal: formData.get('tanggal'),
-          no_so: formData.get('no_so'),
-          transporter: formData.get('transporter'),
-          tipe_truk: formData.get('tipe_truk'),
-          no_truk: formData.get('no_truk'),
-          driver: formData.get('driver'),
-          pallet: formData.get('pallet')
-        },
-        items: []
+          no_sj: formData.get('no_sj'), tanggal: formData.get('tanggal'), no_so: formData.get('no_so'),
+          transporter: formData.get('transporter'), tipe_truk: formData.get('tipe_truk'), no_truk: formData.get('no_truk'),
+          driver: formData.get('driver'), pallet: formData.get('pallet')
+        }, items: []
       };
-
       const codes = formData.getAll('item_kode[]');
       const names = formData.getAll('item_nama[]');
       const uoms = formData.getAll('item_uom[]');
@@ -542,28 +608,11 @@
       const qtyKs = formData.getAll('item_qty_kirim[]');
       const berats = formData.getAll('item_berat[]');
       const totals = formData.getAll('item_total[]');
-
       for (let i = 0; i < names.length; i++) {
-        if (names[i]) {
-          data.items.push({
-            kode: codes[i], nama: names[i], uom: uoms[i],
-            qty_pesan: qtyPs[i], qty_kirim: qtyKs[i],
-            berat: berats[i], total_berat: totals[i]
-          });
-        }
+        if (names[i]) data.items.push({ kode: codes[i], nama: names[i], uom: uoms[i], qty_pesan: qtyPs[i], qty_kirim: qtyKs[i], berat: berats[i], total_berat: totals[i] });
       }
       return data;
     }
-
-    // --- PREVIEW & PDF & WA ---
-    let LAYOUT_CONFIG = {
-      pageSize: { w: 229, h: 162 }, fontSize: 10, fontName: 'courier', globalOffset: { x: 5, y: 13 }, headerGap: 0, 
-      header: { no_sj: { x: 160, y: 22 }, tanggal: { x: 160, y: 26 }, no_so: { x: 160, y: 32.7 }, transporter: { x: 160, y: 36.7 }, tipe_truk: { x: 160, y: 44 }, no_truk: { x: 160, y: 48 }, driver: { x: 160, y: 52 } },
-      tujuan: { x: 20, y: 32, maxWidth: 80, lineHeight: 5 },
-      table: { startY: 68, rowHeight: 6, cols: { kode: 12, nama: 42, uom: 95, qty_pesan: 110, qty_kirim: 130, berat: 150, total: 175 } },
-      footer: { pallet: { x: 90, y: 130 } }
-    };
-
     function handlePreview() {
       const data = getFormDataFromDOM();
       if(!data.header.no_sj) { alert('Isi No. Surat Jalan!'); return; }
@@ -572,49 +621,9 @@
       document.getElementById('previewModal').classList.remove('hidden');
     }
     function closePreview() { document.getElementById('previewModal').classList.add('hidden'); }
-    function toggleSettingsModal() { document.getElementById('settingsModal').classList.toggle('hidden'); }
-    function saveSettings() { toggleSettingsModal(); alert("Setting Tersimpan (Session)"); } 
-    function loadSettings() { /* Load from localStorage if needed */ }
-
-    function createPDFObject(data) {
-      const { jsPDF } = window.jspdf;
-      const cfg = LAYOUT_CONFIG;
-      const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: [cfg.pageSize.w, cfg.pageSize.h] });
-      doc.setFont(cfg.fontName, 'normal'); doc.setFontSize(cfg.fontSize);
-      const getX = (val) => val + cfg.globalOffset.x; const getY = (val) => val + cfg.globalOffset.y;
-      
-      const txt = (str, x, y) => { if(str) doc.text(String(str).toUpperCase(), getX(x), getY(y)); };
-      const h = data.header; const hc = cfg.header;
-      
-      txt(h.no_sj, hc.no_sj.x, hc.no_sj.y);
-      txt(h.tanggal, hc.tanggal.x, hc.tanggal.y);
-      txt(h.no_so, hc.no_so.x, hc.no_so.y);
-      txt(h.transporter, hc.transporter.x, hc.transporter.y);
-      txt(h.tipe_truk, hc.tipe_truk.x, hc.tipe_truk.y);
-      txt(h.no_truk, hc.no_truk.x, hc.no_truk.y);
-      txt(h.driver, hc.driver.x, hc.driver.y);
-      
-      if (h.tujuan) { doc.text(doc.splitTextToSize(h.tujuan.toUpperCase(), cfg.tujuan.maxWidth), getX(cfg.tujuan.x), getY(cfg.tujuan.y)); }
-      
-      let cy = cfg.table.startY;
-      data.items.forEach(item => {
-        txt(item.kode, cfg.table.cols.kode, cy);
-        txt(item.nama, cfg.table.cols.nama, cy);
-        txt(item.uom, cfg.table.cols.uom, cy);
-        txt(item.qty_pesan, cfg.table.cols.qty_pesan, cy);
-        txt(item.qty_kirim, cfg.table.cols.qty_kirim, cy);
-        txt(item.berat, cfg.table.cols.berat, cy);
-        txt(item.total_berat, cfg.table.cols.total, cy);
-        cy += cfg.table.rowHeight;
-      });
-      txt(h.pallet, cfg.footer.pallet.x, cfg.footer.pallet.y);
-      return doc;
-    }
-
     async function sendWhatsappMessage(data) {
         let pesan = `*SURAT JALAN BARU*\nNo: ${data.header.no_sj}\nTujuan: ${data.header.tujuan.split('\n')[0]}\n\nItem:\n`;
         data.items.forEach((i, idx) => pesan += `${idx+1}. ${i.nama} (${i.qty_kirim} ${i.uom})\n`);
-        
         const formData = new FormData();
         formData.append('target', APP_CONFIG.wa_target);
         formData.append('message', pesan);
