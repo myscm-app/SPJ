@@ -28,7 +28,8 @@
 </head>
 <body class="py-6 px-4 sm:px-8">
 
-  <!-- DATALIST GLOBAL (Hanya untuk Items sekarang) -->
+  <!-- DATALIST GLOBAL -->
+  <datalist id="listCustomers"></datalist>
   <datalist id="listItems"></datalist>
 
   <div class="max-w-6xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden relative min-h-[800px]">
@@ -71,7 +72,6 @@
           <div class="space-y-4">
             <div>
               <label class="label-text">Pilih Customer</label>
-              <!-- PERBAIKAN: Ganti Input Datalist dengan Select Dropdown -->
               <select id="inputCustomerName" class="input-field bg-indigo-50 font-bold" onchange="autoFillCustomer(this)">
                  <option value="" disabled selected>-- Pilih Customer --</option>
                  <!-- Option akan diisi via JS -->
@@ -775,19 +775,25 @@
     }
     function closePreview() { document.getElementById('previewModal').classList.add('hidden'); }
     
-    // FORMAT WA UPDATE: Menggunakan *SURAT JALAN BARU* (Kembali ke format lama)
+    // FORMAT WA UPDATE: Alignment Manual (Rata)
     async function sendWhatsappMessage(data) {
-        let pesan = `*SURAT JALAN BARU*\n`;
-        pesan += `No: ${data.header.no_sj}\n`;
-        pesan += `Tujuan: ${data.header.tujuan.split('\n')[0]}\n\n`; // Only First Line
+        let pesan = `*🔔 LAPORAN TRANSAKSI TRADING & NON MI*\n`;
+        pesan += `📅 Tgl       : ${data.header.tanggal}\n`;
+        pesan += `🔄 Tipe      : Cetak SPJ\n`;
+        pesan += `👤 User      : Admin\n\n`;
         
-        pesan += `Item:\n`;
+        pesan += `📄 No. SJ  : ${data.header.no_sj}\n`;
+        pesan += `📍 Tujuan  : ${data.header.tujuan.split('\n')[0]}\n\n`; 
+        
+        pesan += `*Rincian Produk*\n`;
+        pesan += `--------------------------------\n`; 
+        
         data.items.forEach((i, idx) => {
-            pesan += `${idx+1}. ${i.nama} (${i.qty_kirim} ${i.uom})\n`;
+            pesan += `${idx+1}. *${i.nama}*\n`;
+            pesan += `   📦 ${i.qty_kirim} ${i.uom}`;
+            if(i.total_berat && i.total_berat > 0) pesan += ` (${i.total_berat} Ton)`;
+            pesan += `\n`;
         });
-        
-        // Hapus footer custom saya agar bersih (Mengandalkan footer Fonnte bawaan jika ada)
-        // pesan += `\n_Dikirim via Sistem MKI_`; // DIHAPUS
 
         const formData = new FormData();
         formData.append('target', APP_CONFIG.wa_target);
