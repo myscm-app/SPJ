@@ -704,9 +704,28 @@
       document.getElementById('previewModal').classList.remove('hidden');
     }
     function closePreview() { document.getElementById('previewModal').classList.add('hidden'); }
+    
     async function sendWhatsappMessage(data) {
-        let pesan = `*SURAT JALAN BARU*\nNo: ${data.header.no_sj}\nTujuan: ${data.header.tujuan.split('\n')[0]}\n\nItem:\n`;
-        data.items.forEach((i, idx) => pesan += `${idx+1}. ${i.nama} (${i.qty_kirim} ${i.uom})\n`);
+        let pesan = `*🔔 LAPORAN TRANSAKSI TRADING & NON MI*\n`;
+        pesan += `📅 Tgl : ${data.header.tanggal}\n`;
+        pesan += `🔄 Tipe : Cetak SPJ\n`;
+        pesan += `👤 User : Admin\n\n`;
+        
+        pesan += `📄 No. SJ : ${data.header.no_sj}\n`;
+        pesan += `📍 Tujuan : ${data.header.tujuan.split('\n')[0]}\n\n`; // Only First Line
+        
+        pesan += `*Rincian Produk*\n`;
+        pesan += `--------------------------------\n`;
+        
+        data.items.forEach((i, idx) => {
+            pesan += `${idx+1}. *${i.nama}*\n`;
+            pesan += `   📦 ${i.qty_kirim} ${i.uom}`;
+            if(i.total_berat && i.total_berat > 0) pesan += ` (${i.total_berat} Ton)`;
+            pesan += `\n`;
+        });
+        
+        pesan += `\n_Dikirim via Sistem MKI_`;
+
         const formData = new FormData();
         formData.append('target', APP_CONFIG.wa_target);
         formData.append('message', pesan);
