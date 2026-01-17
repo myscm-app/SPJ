@@ -161,21 +161,42 @@
       </form>
     </div>
 
-    <!-- ================= TAB 2 & 3: MASTER DATA ================= -->
+    <!-- ================= TAB 2: MASTER CUSTOMER (GABUNGAN) ================= -->
     <div id="tab-customer" class="tab-content hidden p-6">
        <h3 class="text-lg font-bold text-gray-800 mb-4">Master Customer</h3>
-       <div class="bg-gray-50 p-4 rounded border mb-6">
+       <div class="bg-blue-50 p-4 rounded border border-blue-200 mb-6">
          <form onsubmit="handleMasterSubmit(event, 'save_customer')">
            <div class="grid grid-cols-1 gap-4">
-             <div><label class="label-text">Nama Customer</label><input type="text" name="nama" required class="input-field"></div>
-             <div><label class="label-text">Alamat</label><textarea name="alamat" required class="input-field h-20"></textarea></div>
-             <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Simpan</button>
+             <div>
+               <label class="label-text font-bold">Data Lengkap Customer (Nama & Alamat)</label>
+               <p class="text-xs text-gray-500 mb-1">
+                 <i class="fa-solid fa-circle-info"></i> Baris ke-1 akan jadi <strong>Nama Customer</strong>, baris berikutnya <strong>Alamat</strong>.
+               </p>
+               <textarea name="full_data" required class="input-field h-32" placeholder="Contoh:&#10;PT. SUMBER MAKMUR JAYA&#10;Jl. Raya Industri No. 99, Cikarang, Jawa Barat"></textarea>
+             </div>
+             <button type="submit" class="w-full sm:w-auto bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 font-bold">
+               <i class="fa-solid fa-save mr-2"></i> Simpan Customer
+             </button>
            </div>
          </form>
        </div>
-       <div class="overflow-auto max-h-96 border rounded"><table class="min-w-full table-bordered"><tbody id="displayCustomers"></tbody></table></div>
+       
+       <h4 class="font-bold text-gray-700 mb-2">Daftar Customer Tersimpan</h4>
+       <div class="overflow-auto max-h-96 border rounded shadow-inner">
+         <table class="min-w-full table-bordered">
+            <thead class="bg-gray-100 sticky top-0">
+               <tr>
+                 <th class="p-2 text-left text-gray-700">Data Customer (Nama & Alamat)</th>
+               </tr>
+            </thead>
+            <tbody id="displayCustomers" class="bg-white divide-y divide-gray-200">
+               <tr><td class="p-4 text-center text-gray-500">Memuat data...</td></tr>
+            </tbody>
+         </table>
+       </div>
     </div>
 
+    <!-- ================= TAB 3: MASTER ITEM ================= -->
     <div id="tab-item" class="tab-content hidden p-6">
        <h3 class="text-lg font-bold text-gray-800 mb-4">Master Item</h3>
        <div class="bg-gray-50 p-4 rounded border mb-6">
@@ -596,11 +617,23 @@
        e.preventDefault();
        const form = e.target;
        const formData = new FormData(form);
-       const data = Object.fromEntries(formData.entries());
+       let data = Object.fromEntries(formData.entries());
        
        const btn = form.querySelector('button[type="submit"]');
        const originalText = btn.textContent;
        btn.disabled = true; btn.textContent = "Menyimpan...";
+
+       // KHUSUS CUSTOMER: Pecah full_data menjadi nama dan alamat
+       if (actionType === 'save_customer' && data.full_data) {
+           const lines = data.full_data.trim().split('\n');
+           const nama = lines[0].trim();
+           // Gabungkan sisa baris menjadi alamat
+           const alamat = lines.slice(1).join('\n').trim();
+           
+           if(!nama) { alert("Nama Customer (Baris 1) tidak boleh kosong"); btn.disabled=false; btn.textContent=originalText; return; }
+           
+           data = { nama: nama, alamat: alamat };
+       }
 
        try {
           await postDataToSheet(actionType, data);
@@ -625,9 +658,26 @@
        document.getElementById('listCustomers').innerHTML = MASTER_CUSTOMERS.map(c => `<option value="${c.nama}">`).join('');
        document.getElementById('listItems').innerHTML = MASTER_ITEMS.map(i => `<option value="${i.nama}">Kode: ${i.kode}</option>`).join('');
     }
-    function renderMasterTables() { /* Simple renderer to save space */ 
-       const c = document.getElementById('displayCustomers'); c.innerHTML = MASTER_CUSTOMERS.map(x=>`<tr><td class='p-1 border'>${x.nama}</td><td class='p-1 border'>${x.alamat}</td></tr>`).join('');
-       const i = document.getElementById('displayItems'); i.innerHTML = MASTER_ITEMS.map(x=>`<tr><td class='p-1 border'>${x.kode}</td><td class='p-1 border'>${x.nama}</td><td class='p-1 border'>${x.uom}</td></tr>`).join('');
+    function renderMasterTables() { 
+       const c = document.getElementById('displayCustomers'); 
+       if(MASTER_CUSTOMERS.length > 0) {
+           c.innerHTML = MASTER_CUSTOMERS.map(x=>`
+             <tr>
+               <td class='p-3 border'>
+                 <div class="font-bold text-gray-800">${x.nama}</div>
+                 <div class="text-sm text-gray-600 whitespace-pre-line">${x.alamat}</div>
+               </td>
+             </tr>`).join('');
+       } else {
+           c.innerHTML = `<tr><td class="p-4 text-center text-gray-500">Belum ada data customer</td></tr>`;
+       }
+
+       const i = document.getElementById('displayItems'); 
+       if(MASTER_ITEMS.length > 0) {
+           i.innerHTML = MASTER_ITEMS.map(x=>`<tr><td class='p-1 border'>${x.kode}</td><td class='p-1 border'>${x.nama}</td><td class='p-1 border'>${x.uom}</td></tr>`).join('');
+       } else {
+           i.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-gray-500">Belum ada data item</td></tr>`;
+       }
     }
     
     function addRow() {
@@ -705,26 +755,19 @@
     }
     function closePreview() { document.getElementById('previewModal').classList.add('hidden'); }
     
+    // FORMAT WA UPDATE: Menggunakan *SURAT JALAN BARU* (Kembali ke format lama)
     async function sendWhatsappMessage(data) {
-        let pesan = `*🔔 LAPORAN TRANSAKSI TRADING & NON MI*\n`;
-        pesan += `📅 Tgl : ${data.header.tanggal}\n`;
-        pesan += `🔄 Tipe : Cetak SPJ\n`;
-        pesan += `👤 User : Admin\n\n`;
+        let pesan = `*SURAT JALAN BARU*\n`;
+        pesan += `No: ${data.header.no_sj}\n`;
+        pesan += `Tujuan: ${data.header.tujuan.split('\n')[0]}\n\n`; // Only First Line
         
-        pesan += `📄 No. SJ : ${data.header.no_sj}\n`;
-        pesan += `📍 Tujuan : ${data.header.tujuan.split('\n')[0]}\n\n`; // Only First Line
-        
-        pesan += `*Rincian Produk*\n`;
-        pesan += `--------------------------------\n`;
-        
+        pesan += `Item:\n`;
         data.items.forEach((i, idx) => {
-            pesan += `${idx+1}. *${i.nama}*\n`;
-            pesan += `   📦 ${i.qty_kirim} ${i.uom}`;
-            if(i.total_berat && i.total_berat > 0) pesan += ` (${i.total_berat} Ton)`;
-            pesan += `\n`;
+            pesan += `${idx+1}. ${i.nama} (${i.qty_kirim} ${i.uom})\n`;
         });
         
-        pesan += `\n_Dikirim via Sistem MKI_`;
+        // Hapus footer custom saya agar bersih (Mengandalkan footer Fonnte bawaan jika ada)
+        // pesan += `\n_Dikirim via Sistem MKI_`; // DIHAPUS
 
         const formData = new FormData();
         formData.append('target', APP_CONFIG.wa_target);
