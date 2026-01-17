@@ -28,8 +28,7 @@
 </head>
 <body class="py-6 px-4 sm:px-8">
 
-  <!-- DATALIST GLOBAL -->
-  <datalist id="listCustomers"></datalist>
+  <!-- DATALIST GLOBAL (Hanya untuk Items sekarang) -->
   <datalist id="listItems"></datalist>
 
   <div class="max-w-6xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden relative min-h-[800px]">
@@ -72,7 +71,11 @@
           <div class="space-y-4">
             <div>
               <label class="label-text">Pilih Customer</label>
-              <input list="listCustomers" id="inputCustomerName" class="input-field bg-indigo-50 font-bold" placeholder="Ketik nama customer..." oninput="autoFillCustomer(this)" onchange="autoFillCustomer(this)">
+              <!-- PERBAIKAN: Ganti Input Datalist dengan Select Dropdown -->
+              <select id="inputCustomerName" class="input-field bg-indigo-50 font-bold" onchange="autoFillCustomer(this)">
+                 <option value="" disabled selected>-- Pilih Customer --</option>
+                 <!-- Option akan diisi via JS -->
+              </select>
             </div>
             <div>
               <label class="label-text">Alamat Lengkap</label>
@@ -655,7 +658,19 @@
     }
 
     function populateDatalists() {
-       document.getElementById('listCustomers').innerHTML = MASTER_CUSTOMERS.map(c => `<option value="${c.nama}">`).join('');
+       const selectEl = document.getElementById('inputCustomerName');
+       // Kosongkan option selain yang pertama (placeholder)
+       selectEl.innerHTML = '<option value="" disabled selected>-- Pilih Customer --</option>';
+       
+       // Isi option dari data master
+       MASTER_CUSTOMERS.forEach(c => {
+           const option = document.createElement('option');
+           option.value = c.nama;
+           option.textContent = c.nama;
+           selectEl.appendChild(option);
+       });
+
+       // Item masih pakai Datalist karena untuk pencarian
        document.getElementById('listItems').innerHTML = MASTER_ITEMS.map(i => `<option value="${i.nama}">Kode: ${i.kode}</option>`).join('');
     }
     function renderMasterTables() { 
@@ -699,13 +714,13 @@
        else total = (qty * berat) / 1000;
        tr.querySelector('input[name="item_total[]"]').value = total.toFixed(3); 
     }
-    // PERBAIKAN: Fungsi autoFillCustomer yang lebih robust (ignore case, ignore space)
-    function autoFillCustomer(inputEl) {
-       const val = inputEl.value.trim().toUpperCase(); 
+    // PERBAIKAN: Fungsi autoFillCustomer untuk Select Dropdown
+    function autoFillCustomer(selectEl) {
+       const val = selectEl.value; 
        if(!val) return;
 
-       // Cari di MASTER_CUSTOMERS dengan normalisasi (Case Insensitive + Trim)
-       const found = MASTER_CUSTOMERS.find(c => c.nama.trim().toUpperCase() === val);
+       // Cari di MASTER_CUSTOMERS (Case Sensitive OK karena dari dropdown)
+       const found = MASTER_CUSTOMERS.find(c => c.nama === val);
        
        if(found) {
            document.getElementById('inputCustomerAddress').value = found.alamat;
@@ -724,11 +739,16 @@
     }
 
     function getFormDataFromDOM() {
+      // Ambil elemen select untuk nama customer
+      const custSelect = document.getElementById('inputCustomerName');
+      const custName = custSelect.value || custSelect.options[custSelect.selectedIndex]?.text;
+
       const form = document.getElementById('spjForm');
       const formData = new FormData(form);
+      
       const data = {
         header: {
-          tujuan: document.getElementById('inputCustomerName').value + '\n' + document.getElementById('inputCustomerAddress').value,
+          tujuan: custName + '\n' + document.getElementById('inputCustomerAddress').value,
           no_sj: formData.get('no_sj'), tanggal: formData.get('tanggal'), no_so: formData.get('no_so'),
           transporter: formData.get('transporter'), tipe_truk: formData.get('tipe_truk'), no_truk: formData.get('no_truk'),
           driver: formData.get('driver'), pallet: formData.get('pallet')
