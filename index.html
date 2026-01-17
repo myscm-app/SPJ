@@ -206,14 +206,11 @@
                <label class="label-text">Nama Item</label>
                <input type="text" name="nama" required class="input-field">
              </div>
-             <div>
+             <div class="col-span-2">
                <label class="label-text">UoM (Satuan)</label>
                <input type="text" name="uom" required class="input-field" placeholder="ZAK/PAIL">
              </div>
-             <div>
-               <label class="label-text">Berat Standar (kg)</label>
-               <input type="number" name="berat" step="0.01" required class="input-field">
-             </div>
+             <!-- FIELD BERAT DIHAPUS DISINI -->
              <div class="col-span-2">
                 <button type="submit" class="w-full sm:w-auto bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Simpan Item</button>
              </div>
@@ -225,10 +222,10 @@
        <div class="overflow-auto max-h-96 border rounded">
          <table class="min-w-full table-bordered text-sm">
             <thead class="bg-gray-100 sticky top-0">
-               <tr><th class="p-2">Kode</th><th class="p-2">Nama</th><th class="p-2">UoM</th><th class="p-2">Berat</th></tr>
+               <tr><th class="p-2">Kode</th><th class="p-2">Nama</th><th class="p-2">UoM</th></tr>
             </thead>
             <tbody id="displayItems" class="bg-white">
-               <tr><td colspan="4" class="p-2 text-center">Memuat...</td></tr>
+               <tr><td colspan="3" class="p-2 text-center">Memuat...</td></tr>
             </tbody>
          </table>
        </div>
@@ -282,8 +279,8 @@
   <script>
     // --- KONFIGURASI GLOBAL ---
     const APP_CONFIG = {
-        // Ganti URL ini jika Anda melakukan deployment baru (New Deployment)
-        script_url: 'https://script.google.com/macros/s/AKfycbyXiHOSWUexe8PPHQWzsPm4IGAA7i22nnX28xcIyyWE-Nnypovr5vFrLHvlPRrc-lqBlQ/exec', 
+        // URL DEPLOY BARU
+        script_url: 'https://script.google.com/macros/s/AKfycbwqAtB04uQ5njMVJpru8hJQPA9eBx2VGhY2THd9bMVRq3XvrrP7-8-XT7Yk12TEXdytTQ/exec', 
         wa_token: 'T9SCfr4hZSmGEy8ngizJ',
         wa_target: '6282258110899-1604625450@g.us'
     };
@@ -338,9 +335,6 @@
             <div class='bg-red-500 text-white px-2 py-1 rounded inline-block shadow'>
                <i class='fa-solid fa-triangle-exclamation'></i> Gagal Load Master
             </div>
-            <div class='text-[10px] mt-1 text-red-100 bg-red-900/30 px-2 py-1 rounded'>
-               Solusi: Deploy Script sbg 'Web App' -> Who has access: <strong>'Anyone'</strong>
-            </div>
           `;
        }
     }
@@ -371,9 +365,8 @@
                <td class="p-2 border border-gray-200 text-gray-600">${i.kode}</td>
                <td class="p-2 border border-gray-200 font-medium">${i.nama}</td>
                <td class="p-2 border border-gray-200 text-gray-600">${i.uom}</td>
-               <td class="p-2 border border-gray-200 text-right">${i.berat}</td>
              </tr>`).join('');
-       } else { tbodyItem.innerHTML = '<tr><td colspan="4" class="p-2 text-center text-gray-500">Belum ada data</td></tr>'; }
+       } else { tbodyItem.innerHTML = '<tr><td colspan="3" class="p-2 text-center text-gray-500">Belum ada data</td></tr>'; }
     }
 
     // --- LOGIKA AUTO-FILL ---
@@ -393,8 +386,8 @@
           const tr = inputEl.closest('tr');
           tr.querySelector('input[name="item_kode[]"]').value = found.kode;
           tr.querySelector('input[name="item_uom[]"]').value = found.uom;
-          tr.querySelector('input[name="item_berat[]"]').value = found.berat;
-          // Trigger kalkulasi manual karena value berubah via script
+          // PERHATIAN: Berat tidak lagi di-autofill karena sudah dihapus dari master
+          // User harus input manual.
           calcRow(tr.querySelector('input[name="item_qty_kirim[]"]')); 
        }
     }
