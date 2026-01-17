@@ -157,14 +157,14 @@
 
         <div class="flex justify-end gap-3 pt-4 border-t">
           <button type="submit" id="btnSave" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-            <i class="fa-solid fa-paper-plane mr-2 mt-0.5"></i> Simpan Transaksi & PDF
+            <i class="fa-solid fa-print mr-2 mt-0.5"></i> Print
           </button>
         </div>
         <div id="statusMessage" class="hidden p-4 rounded-md"></div>
       </form>
     </div>
 
-    <!-- ================= TAB 2: MASTER CUSTOMER (GABUNGAN) ================= -->
+    <!-- ================= TAB 2 & 3: MASTER DATA ================= -->
     <div id="tab-customer" class="tab-content hidden p-6">
        <h3 class="text-lg font-bold text-gray-800 mb-4">Master Customer</h3>
        <div class="bg-blue-50 p-4 rounded border border-blue-200 mb-6">
@@ -183,8 +183,6 @@
            </div>
          </form>
        </div>
-       
-       <h4 class="font-bold text-gray-700 mb-2">Daftar Customer Tersimpan</h4>
        <div class="overflow-auto max-h-96 border rounded shadow-inner">
          <table class="min-w-full table-bordered">
             <thead class="bg-gray-100 sticky top-0">
@@ -199,7 +197,6 @@
        </div>
     </div>
 
-    <!-- ================= TAB 3: MASTER ITEM ================= -->
     <div id="tab-item" class="tab-content hidden p-6">
        <h3 class="text-lg font-bold text-gray-800 mb-4">Master Item</h3>
        <div class="bg-gray-50 p-4 rounded border mb-6">
@@ -542,14 +539,20 @@
          await postDataToSheet('save_sj', data);
          const doc = createPDFObject(data);
          doc.save(`SJ_${data.header.no_sj.replace(/\//g, '-')}.pdf`);
+         
+         // SHOW PDF PREVIEW
+         document.getElementById('pdfPreviewFrame').src = doc.output('datauristring');
+         document.getElementById('previewModal').classList.remove('hidden');
+
          await sendWhatsappMessage(data);
-         status.innerHTML = "✅ Transaksi Disimpan, PDF Download, WA Terkirim!";
+         status.innerHTML = "✅ Transaksi Disimpan & WA Terkirim!";
          status.className = "mt-4 p-4 bg-green-100 text-green-700 rounded block border border-green-300";
-         setTimeout(() => { location.reload(); }, 3000);
+         // setTimeout(() => { location.reload(); }, 3000); // Remove auto reload
       } catch (err) {
          status.innerHTML = "⚠️ Error: " + err.message;
          status.className = "mt-4 p-4 bg-red-100 text-red-700 rounded block border border-red-300";
-         btn.disabled = false; btn.innerHTML = 'Coba Lagi';
+      } finally {
+         btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-print mr-2 mt-0.5"></i> Print';
       }
     }
 
@@ -702,6 +705,7 @@
       tr.innerHTML = `<td class="px-2 py-1 border border-gray-300"><input list="listItems" name="item_nama[]" class="input-field text-xs h-8 font-bold" placeholder="Cari..." onchange="autoFillItem(this)"></td><td class="px-2 py-1 border border-gray-300"><input type="text" name="item_kode[]" class="input-field text-xs h-8 bg-gray-50" readonly></td><td class="px-2 py-1 border border-gray-300"><input type="text" name="item_uom[]" class="input-field text-xs h-8" oninput="calcRow(this)"></td><td class="px-2 py-1 border border-gray-300"><input type="number" name="item_qty_pesan[]" class="input-field text-xs h-8"></td><td class="px-2 py-1 border border-gray-300"><input type="number" name="item_qty_kirim[]" class="input-field text-xs h-8" oninput="calcRow(this)"></td><td class="px-2 py-1 border border-gray-300"><input type="number" name="item_berat[]" class="input-field text-xs h-8" step="0.01" oninput="calcRow(this)"></td><td class="px-2 py-1 border border-gray-300"><input type="number" name="item_total[]" class="input-field text-xs h-8 bg-white" step="any"></td><td class="px-2 py-1 border border-gray-300 text-center"><button type="button" onclick="this.closest('tr').remove()" class="text-red-600 hover:text-red-900 font-bold px-2">X</button></td>`;
       tbody.appendChild(tr);
     }
+    // Update logic kalkulasi berdasarkan UoM dan pembulatan (hilangkan di belakang koma)
     function calcRow(input) {
        if(!input) return;
        const tr = input.closest('tr');
@@ -712,7 +716,8 @@
        if (uom === 'KG') total = qty / 1000;
        else if (uom === 'TON') total = qty;
        else total = (qty * berat) / 1000;
-       tr.querySelector('input[name="item_total[]"]').value = total.toFixed(3); 
+       // Hilangkan di belakang koma: toFixed(0)
+       tr.querySelector('input[name="item_total[]"]').value = total.toFixed(0); 
     }
     // PERBAIKAN: Fungsi autoFillCustomer untuk Select Dropdown
     function autoFillCustomer(selectEl) {
