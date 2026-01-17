@@ -22,7 +22,7 @@
     /* Tab Active State */
     .tab-btn.active { @apply border-indigo-500 text-indigo-600 bg-indigo-50; }
     
-    /* Setting Input: Type Text agar fleksibel, bg-white agar terlihat aktif */
+    /* Setting Input Compact */
     .setting-input { @apply w-full text-center border-gray-300 h-8 text-xs border rounded bg-white text-gray-900 font-semibold focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500; }
   </style>
 </head>
@@ -72,7 +72,7 @@
           <div class="space-y-4">
             <div>
               <label class="label-text">Pilih Customer</label>
-              <input list="listCustomers" id="inputCustomerName" class="input-field bg-indigo-50 font-bold" placeholder="Ketik nama customer..." onchange="autoFillCustomer(this)">
+              <input list="listCustomers" id="inputCustomerName" class="input-field bg-indigo-50 font-bold" placeholder="Ketik nama customer..." oninput="autoFillCustomer(this)" onchange="autoFillCustomer(this)">
             </div>
             <div>
               <label class="label-text">Alamat Lengkap</label>
@@ -208,20 +208,43 @@
 
          <div class="h-[70vh] overflow-y-auto pr-2">
              <div class="mb-4 bg-blue-50 p-3 rounded text-xs text-blue-800">
-                <i class="fa-solid fa-info-circle mr-1"></i> <strong>Tips:</strong> Gunakan titik (.) untuk desimal. Contoh: 165.5
+                <i class="fa-solid fa-info-circle mr-1"></i> <strong>Tips:</strong> Gunakan titik (.) untuk desimal. Margin Global akan menggeser SEMUA elemen.
              </div>
 
-             <!-- UMUM -->
+             <!-- 1. KERTAS & MARGIN -->
              <div class="mb-4 bg-white p-3 rounded border border-gray-200 shadow-sm">
-                <h4 class="font-bold text-indigo-700 text-sm mb-2 border-b border-gray-100 pb-1">1. Umum</h4>
+                <h4 class="font-bold text-indigo-700 text-sm mb-2 border-b border-gray-100 pb-1">1. Kertas & Margin (Printer Envelope C5)</h4>
+                <div class="grid grid-cols-4 gap-4">
+                   <div>
+                       <label class="text-xs font-semibold block mb-1">Lebar Kertas</label>
+                       <input type="text" id="conf_paperW" class="setting-input bg-gray-50" placeholder="229">
+                   </div>
+                   <div>
+                       <label class="text-xs font-semibold block mb-1">Tinggi Kertas</label>
+                       <input type="text" id="conf_paperH" class="setting-input bg-gray-50" placeholder="162">
+                   </div>
+                   <div>
+                       <label class="text-xs font-semibold block mb-1 text-blue-600">Margin Kiri (+/-)</label>
+                       <input type="text" id="conf_marginX" class="setting-input font-bold text-blue-700" placeholder="0">
+                   </div>
+                   <div>
+                       <label class="text-xs font-semibold block mb-1 text-blue-600">Margin Atas (+/-)</label>
+                       <input type="text" id="conf_marginY" class="setting-input font-bold text-blue-700" placeholder="0">
+                   </div>
+                </div>
+             </div>
+
+             <!-- 2. UMUM -->
+             <div class="mb-4 bg-white p-3 rounded border border-gray-200 shadow-sm">
+                <h4 class="font-bold text-indigo-700 text-sm mb-2 border-b border-gray-100 pb-1">2. Umum</h4>
                 <div class="grid grid-cols-3 gap-4">
                    <div><label class="text-xs font-semibold block mb-1">Ukuran Font (pt)</label><input type="text" id="conf_fontSize" class="setting-input"></div>
                 </div>
              </div>
 
-             <!-- POSISI HEADER -->
+             <!-- 3. POSISI HEADER -->
              <div class="mb-4 bg-white p-3 rounded border border-gray-200 shadow-sm">
-                <h4 class="font-bold text-indigo-700 text-sm mb-2 border-b border-gray-100 pb-1">2. Posisi Header (Atur Koordinat)</h4>
+                <h4 class="font-bold text-indigo-700 text-sm mb-2 border-b border-gray-100 pb-1">3. Posisi Header (Atur Koordinat)</h4>
                 <div class="grid grid-cols-12 gap-2 text-xs font-semibold text-gray-600 mb-2 bg-gray-50 p-1 rounded">
                     <div class="col-span-4">Nama Kolom</div>
                     <div class="col-span-4 text-center">Posisi X (Kiri-Kanan)</div>
@@ -230,9 +253,9 @@
                 <div id="headerConfigContainer" class="space-y-2"></div>
              </div>
 
-             <!-- POSISI TABEL -->
+             <!-- 4. POSISI TABEL -->
              <div class="mb-4 bg-white p-3 rounded border border-gray-200 shadow-sm">
-                <h4 class="font-bold text-indigo-700 text-sm mb-2 border-b border-gray-100 pb-1">3. Posisi Daftar Barang (Tabel)</h4>
+                <h4 class="font-bold text-indigo-700 text-sm mb-2 border-b border-gray-100 pb-1">4. Posisi Daftar Barang (Tabel)</h4>
                 <div class="grid grid-cols-2 gap-4 mb-3">
                     <div><label class="text-xs font-semibold block mb-1">Posisi Mulai Tabel (Y)</label><input type="text" id="conf_tableY" class="setting-input"></div>
                     <div><label class="text-xs font-semibold block mb-1">Tinggi Baris (Row Height)</label><input type="text" id="conf_rowH" class="setting-input"></div>
@@ -274,7 +297,7 @@
   </div>
 
   <script>
-    // === CONFIG ===
+    // === KONFIGURASI ===
     const APP_CONFIG = {
         script_url: 'https://script.google.com/macros/s/AKfycbw6hzLyjrLxLVDS2j6m8Q7abXP2t3gOcZyW5QBH3FFLnNXOm-6_fYW3TggeA-1fsFhqDA/exec', 
         wa_token: 'T9SCfr4hZSmGEy8ngizJ',
@@ -284,8 +307,10 @@
     let MASTER_CUSTOMERS = [];
     let MASTER_ITEMS = [];
     
-    // DEFAULT LAYOUT (Jika Sheet4 Kosong)
+    // DEFAULT LAYOUT
     const DEFAULT_LAYOUT = {
+      // SETTING KERTAS DEFAULT (Envelope C5)
+      paper: { width: 229, height: 162, marginX: 0, marginY: 0 },
       fontSize: 10,
       fontName: 'courier',
       fields: {
@@ -334,18 +359,23 @@
     // --- FETCH ---
     async function fetchMasterData() {
        const statusEl = document.getElementById('loadingDataStatus');
+       statusEl.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> Menghubungkan...";
        try {
           const response = await fetch(APP_CONFIG.script_url + '?action=get_masters', { method: 'GET', mode: 'cors', credentials: 'omit', redirect: 'follow' });
+          if(!response.ok) throw new Error("HTTP Error: " + response.status);
           const text = await response.text();
+          if(text.trim().startsWith("<!DOCTYPE html") || text.includes("Google Accounts")) throw new Error("Akses Ditolak. Pastikan Deploy sebagai 'Anyone'");
           let result;
-          try { result = JSON.parse(text); } catch(e) { console.warn("Master Parse Error", text); return; }
-
+          try { result = JSON.parse(text); } catch(e) { throw new Error("Format Data Rusak (Bukan JSON)"); }
           if(result.status === 'success') {
              MASTER_CUSTOMERS = result.customers; MASTER_ITEMS = result.items;
              populateDatalists(); renderMasterTables();
-             statusEl.innerHTML = "<span class='text-green-200'><i class='fa-solid fa-check'></i> Master Ready</span>";
-          }
-       } catch (err) { console.error("Fetch Master Error:", err); }
+             statusEl.innerHTML = "<span class='text-green-200 font-bold'><i class='fa-solid fa-wifi'></i> Terhubung</span>";
+          } else { throw new Error(result.message || "Gagal Load Data"); }
+       } catch (err) { 
+          console.error("Fetch Master Error:", err);
+          statusEl.innerHTML = `<span class='bg-red-600 text-white px-2 py-1 rounded text-[10px] font-bold'><i class="fa-solid fa-triangle-exclamation"></i> Gagal: ${err.message}</span>`;
+       }
     }
 
     async function fetchSettingsData() {
@@ -353,15 +383,14 @@
           const response = await fetch(APP_CONFIG.script_url + '?action=get_settings', { method: 'GET', mode: 'cors', credentials: 'omit', redirect: 'follow' });
           const text = await response.text();
           let result;
-          try { result = JSON.parse(text); } catch(e) { console.warn("Setting Parse Error (Using Defaults)", text); return; }
+          try { result = JSON.parse(text); } catch(e) { return; }
 
           if(result.status === 'success' && result.data) {
              const serverConf = result.data;
+             if(serverConf.paper) LAYOUT_CONFIG.paper = serverConf.paper; // Load Paper Settings
              if(serverConf.fontSize) LAYOUT_CONFIG.fontSize = serverConf.fontSize;
              if(serverConf.fields) LAYOUT_CONFIG.fields = serverConf.fields;
              if(serverConf.table) LAYOUT_CONFIG.table = serverConf.table;
-             
-             console.log("Setting Loaded:", LAYOUT_CONFIG);
              renderSettingsModal(); 
           }
        } catch (err) { console.error("Fetch Settings Error:", err); }
@@ -369,13 +398,20 @@
 
     // --- RENDER SETTINGS MODAL ---
     function renderSettingsModal() {
+        // 1. Paper & Margin
+        const p = LAYOUT_CONFIG.paper || { width: 229, height: 162, marginX: 0, marginY: 0 };
+        document.getElementById('conf_paperW').value = p.width;
+        document.getElementById('conf_paperH').value = p.height;
+        document.getElementById('conf_marginX').value = p.marginX || 0;
+        document.getElementById('conf_marginY').value = p.marginY || 0;
+
+        // 2. Font
         document.getElementById('conf_fontSize').value = LAYOUT_CONFIG.fontSize;
         
-        // Header Fields
+        // 3. Header Fields
         const hCont = document.getElementById('headerConfigContainer');
         hCont.innerHTML = '';
         const fieldOrder = ['customer', 'no_sj', 'tanggal', 'no_so', 'transporter', 'driver', 'tipe_truk', 'no_truk', 'pallet'];
-        
         fieldOrder.forEach(key => {
             const val = LAYOUT_CONFIG.fields[key];
             if(!val) return;
@@ -388,14 +424,13 @@
             `;
         });
 
-        // Table Config
+        // 4. Table Config
         document.getElementById('conf_tableY').value = LAYOUT_CONFIG.table.startY;
         document.getElementById('conf_rowH').value = LAYOUT_CONFIG.table.rowHeight;
         
         const tCont = document.getElementById('tableConfigContainer');
         tCont.innerHTML = '';
         const colOrder = ['kode', 'nama', 'uom', 'qty_pesan', 'qty_kirim', 'berat', 'total'];
-        
         colOrder.forEach(key => {
             const val = LAYOUT_CONFIG.table.cols[key];
             if(!val) return;
@@ -409,7 +444,6 @@
     }
 
     // --- SAVE SETTINGS ---
-    // Helper untuk parse float yang aman (koma jadi titik)
     function safeFloat(val) {
         if(!val) return 0;
         return parseFloat(String(val).replace(',', '.')) || 0;
@@ -420,6 +454,15 @@
        btn.disabled = true; btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> Menyimpan...";
        
        const newConf = JSON.parse(JSON.stringify(LAYOUT_CONFIG));
+       
+       // Save Paper & Margin
+       newConf.paper = {
+           width: safeFloat(document.getElementById('conf_paperW').value) || 229,
+           height: safeFloat(document.getElementById('conf_paperH').value) || 162,
+           marginX: safeFloat(document.getElementById('conf_marginX').value),
+           marginY: safeFloat(document.getElementById('conf_marginY').value)
+       };
+
        newConf.fontSize = safeFloat(document.getElementById('conf_fontSize').value) || 10;
        
        for (const key of Object.keys(newConf.fields)) {
@@ -486,18 +529,32 @@
       }
     }
 
-    // --- PDF GENERATOR (COORDINATE BASED) ---
+    // --- PDF GENERATOR (COORDINATE + MARGIN BASED) ---
     function createPDFObject(data) {
       const { jsPDF } = window.jspdf;
       const cfg = LAYOUT_CONFIG;
       const f = cfg.fields;
       
-      const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: [229, 162] });
+      // Ambil Setting Kertas
+      const p = cfg.paper || { width: 229, height: 162, marginX: 0, marginY: 0 };
+      const marginX = p.marginX || 0;
+      const marginY = p.marginY || 0;
+
+      const doc = new jsPDF({ 
+          orientation: 'landscape', 
+          unit: 'mm', 
+          format: [p.width, p.height] // Menggunakan ukuran kertas dari setting
+      });
+      
       doc.setFont(cfg.fontName, 'normal'); 
       doc.setFontSize(cfg.fontSize);
       
-      const txt = (str, x, y) => { if(str) doc.text(String(str).toUpperCase(), x, y); };
+      // Fungsi helper untuk menulis teks dengan menambahkan Margin Global
+      const txt = (str, x, y) => { 
+          if(str) doc.text(String(str).toUpperCase(), x + marginX, y + marginY); 
+      };
       
+      // Header Fields
       txt(data.header.no_sj, f.no_sj.x, f.no_sj.y);
       txt(data.header.tanggal, f.tanggal.x, f.tanggal.y);
       txt(data.header.no_so, f.no_so.x, f.no_so.y);
@@ -507,9 +564,15 @@
       txt(data.header.no_truk, f.no_truk.x, f.no_truk.y);
       
       if (data.header.tujuan) { 
-         doc.text(doc.splitTextToSize(data.header.tujuan.toUpperCase(), f.customer.w || 80), f.customer.x, f.customer.y); 
+         // Address juga kena margin X dan Y
+         doc.text(
+             doc.splitTextToSize(data.header.tujuan.toUpperCase(), f.customer.w || 80), 
+             f.customer.x + marginX, 
+             f.customer.y + marginY
+         ); 
       }
       
+      // Table
       let cy = cfg.table.startY;
       const tc = cfg.table.cols;
       
@@ -549,7 +612,12 @@
     }
     
     async function postDataToSheet(action, dataPayload) {
-       await fetch(APP_CONFIG.script_url, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: action, data: dataPayload }) });
+       await fetch(APP_CONFIG.script_url, { 
+           method: 'POST', 
+           mode: 'no-cors', 
+           headers: { 'Content-Type': 'text/plain' }, 
+           body: JSON.stringify({ action: action, data: dataPayload }) 
+       });
        return true; 
     }
 
@@ -581,6 +649,19 @@
        else total = (qty * berat) / 1000;
        tr.querySelector('input[name="item_total[]"]').value = total.toFixed(3); 
     }
+    // PERBAIKAN: Fungsi autoFillCustomer yang lebih robust (ignore case, ignore space)
+    function autoFillCustomer(inputEl) {
+       const val = inputEl.value.trim().toUpperCase(); 
+       if(!val) return;
+
+       // Cari di MASTER_CUSTOMERS dengan normalisasi (Case Insensitive + Trim)
+       const found = MASTER_CUSTOMERS.find(c => c.nama.trim().toUpperCase() === val);
+       
+       if(found) {
+           document.getElementById('inputCustomerAddress').value = found.alamat;
+       }
+    }
+
     function autoFillItem(inputEl) {
        const val = inputEl.value;
        const found = MASTER_ITEMS.find(i => i.nama === val);
@@ -591,11 +672,7 @@
           calcRow(tr.querySelector('input[name="item_qty_kirim[]"]')); 
        }
     }
-    function autoFillCustomer(inputEl) {
-       const val = inputEl.value;
-       const found = MASTER_CUSTOMERS.find(c => c.nama === val);
-       if(found) document.getElementById('inputCustomerAddress').value = found.alamat;
-    }
+
     function getFormDataFromDOM() {
       const form = document.getElementById('spjForm');
       const formData = new FormData(form);
